@@ -1,14 +1,18 @@
-// next.config.js
-const supabaseHostname = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname;
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-/** @type {import('next').NextConfig} */
+if (!rawUrl) {
+  throw new Error("Environment variable NEXT_PUBLIC_SUPABASE_URL is not set.");
+}
+
+const supabaseHostname = new URL(rawUrl).hostname;
+
 const nextConfig = {
   images: {
     domains: [supabaseHostname],
   },
   eslint: {
-    ignoreDuringBuilds: true, // 👈 This disables ESLint errors from breaking the build
+    ignoreDuringBuilds: true,
   },
-}
+};
 
-module.exports = nextConfig;
+export default nextConfig;
