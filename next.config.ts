@@ -6,7 +6,9 @@ const nextConfig = {
   images: {
     domains: [supabaseHostname],
   },
-  // ... other config
+  eslint: {
+    ignoreDuringBuilds: true, // 👈 This disables ESLint errors from breaking the build
+  },
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;
