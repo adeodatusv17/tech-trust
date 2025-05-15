@@ -1,0 +1,306 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+  }
+  
+  .backLink {
+    display: inline-flex;
+    align-items: center;
+    color: #3b82f6;
+    margin-bottom: 2rem;
+    text-decoration: none;
+  }
+  
+  .backLink:hover {
+    text-decoration: underline;
+  }
+  
+  .icon {
+    margin-right: 0.5rem;
+  }
+  
+  .header {
+    margin-bottom: 2rem;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .imageGallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .imageContainer {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  
+  .image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .image:hover {
+    transform: scale(1.03);
+    cursor: zoom-in;
+  }
+  
+  .meta {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  
+  .type {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  
+  .type.sell {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+  
+  .type.buy {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+  
+  .price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e3a8a;
+  }
+  
+  .date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4b5563;
+  }
+  
+  .body {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .sectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #1f2937;
+  }
+  
+  .description {
+    line-height: 1.6;
+    color: #374151;
+  }
+  
+  .contactName {
+    margin-bottom: 1rem;
+  }
+  
+  .contactButton {
+    width: 100%;
+    padding: 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .contactButton:hover {
+    background-color: #2563eb;
+  }
+  
+  .contactDetails {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f3f4f6;
+    border-radius: 6px;
+  }
+  
+  .phone {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .secondaryButton {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: white;
+    color: #3b82f6;
+    border: 1px solid #3b82f6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .secondaryButton:hover {
+    background-color: #eff6ff;
+  }
+  
+  .deleteButton {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .deleteButton:hover {
+    background-color: #dc2626;
+  }
+  
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+  }
+  
+  .modalHeader {
+    margin-bottom: 1.5rem;
+  }
+  
+  .modalTitle {
+    font-size: 1.5rem;
+    color: #1f2937;
+  }
+  
+  .modalBody {
+    margin-bottom: 2rem;
+  }
+  
+  .warning {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: #dc2626;
+  }
+  
+  .warningIcon {
+    flex-shrink: 0;
+  }
+  
+  .warningText {
+    font-weight: 600;
+  }
+  
+  .confirmText {
+    color: #4b5563;
+  }
+  
+  .modalActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+  
+  .cancelButton {
+    padding: 0.75rem 1.5rem;
+    background-color: #f3f4f6;
+    color: #374151;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .cancelButton:hover {
+    background-color: #e5e7eb;
+  }
+  
+  .confirmDeleteButton {
+    padding: 0.75rem 1.5rem;
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .confirmDeleteButton:hover {
+    background-color: #b91c1c;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+  
+    .title {
+      font-size: 2rem;
+    }
+  
+    .imageGallery {
+      grid-template-columns: 1fr;
+    }
+  
+    .meta {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  
+    .actions {
+      flex-direction: column;
+    }
+  }

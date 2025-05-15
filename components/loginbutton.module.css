@@ -1,0 +1,125 @@
+.pillButton {
+	font-size: 0.9rem;
+	cursor: pointer;
+	padding: 3px 18px;
+	width: 100%;
+	max-width: 100%;
+	text-align: left;
+	align-self: center;
+	border-radius: 50px;
+	margin: 5px 0;
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+	border: 2px solid transparent;
+	transition: background-color 0.2s ease, color 0.2s ease,
+		border-color 0.2s ease, width 0.3s ease, height 0.3s ease,
+		padding 0.3s ease;
+}
+
+.pillButton.darkVariant {
+	background-color: #222;
+	border-color: #222;
+	color: white;
+}
+
+.pillButton.darkVariant:not(.collapsed):hover {
+	background-color: #fff;
+	color: #222;
+	border-color: #ddd;
+}
+
+.pillButton.lightVariant {
+	background-color: #f0f0f0;
+	border-color: #ccc;
+	color: #333;
+}
+
+.pillButton.lightVariant:not(.collapsed):hover {
+	background-color: #e0e0e0;
+	border-color: #bbb;
+	color: #111;
+}
+
+.pillButton.collapsed {
+	width: 45px;
+	height: 45px;
+	padding: 0;
+	justify-content: center;
+}
+
+.pillButton.darkVariant.collapsed {
+	border-color: #222;
+}
+
+.pillButton.darkVariant.collapsed:hover {
+	background-color: #333;
+	border-color: #555;
+}
+
+.pillButton.lightVariant.collapsed {
+	border-color: #ccc;
+}
+
+.pillButton.lightVariant.collapsed:hover {
+	background-color: #e0e0e0;
+	border-color: #bbb;
+}
+
+.pillButton.collapsed:hover {
+	background-color: #333;
+	border-color: #555;
+}
+
+.pillButton.collapsed .avatar {
+	width: 28px;
+	height: 28px;
+	margin: 0;
+	padding: 0;
+}
+
+.pillButton.collapsed .userInfo {
+	display: none;
+}
+
+.avatar {
+	width: 40px;
+	height: 40px;
+	margin-left: -8px;
+	margin-right: 6px;
+	padding: 5px;
+	flex-shrink: 0;
+	transition: width 0.3s ease, height 0.3s ease, margin 0.3s ease,
+		padding 0.3s ease;
+}
+
+.userInfo {
+	flex-grow: 1;
+	overflow: hidden;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+}
+
+.name {
+	margin-left: 0.25rem;
+	font-size: 1rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 768px) {
+	.pillButton {
+		font-size: 0.8rem;
+	}
+	.avatar {
+		width: 32px;
+		height: 32px;
+	}
+	.name {
+		font-size: 0.9rem;
+	}
+}
