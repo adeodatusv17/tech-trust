@@ -31,13 +31,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           );
           
           // Check if the user has a name in the raw_user_meta_data
-          const name = session.user.user_metadata?.full_name || session.user.email.split("@")[0];
+          const name =
+  session.user.user_metadata?.full_name ??
+  session.user.email?.split("@")[0] ??
+  "Anonymous";
+
+
 
           setUser({
-            email: session.user.email,
-            id: session.user.id,
-            name: name,
-          });
+  email: session.user.email ?? "",
+  id: session.user.id,
+  name: name,
+});
+
         } else {
           console.log("[AuthProvider] No initial session user");
         }
@@ -58,13 +64,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           );
 
           // Check if the user has a name in the raw_user_meta_data
-          const name = session.user.user_metadata?.full_name || session.user.email.split("@")[0];
+          const name =
+  session.user.user_metadata?.full_name ??
+  session.user.email?.split("@")[0] ??
+  "Anonymous";
 
-          setUser({
-            email: session.user.email,
-            id: session.user.id,
-            name: name,
-          });
+
+        setUser({
+  email: session.user.email ?? "",
+  id: session.user.id,
+  name: name,
+});
+
         } else {
           console.log("[AuthProvider] User logged out or session expired");
           setUser(null);

@@ -9,6 +9,7 @@ import styles from "./loginbutton.module.css";
 type Props = {
   isCollapsed: boolean;
   variant?: "light" | "dark";
+  onClick?: () => void;
 };
 
 export default function LoginButton({
