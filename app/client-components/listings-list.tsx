@@ -1,7 +1,7 @@
 'use client'
 import { useState } from "react"
 import Link from "next/link"
-import { useListings } from "./listings-provider"
+import { useListings } from "../../components/listings-provider"
 import { ShoppingCart, Package, ChevronLeft, ChevronRight } from "lucide-react"
 
 const ITEMS_PER_PAGE = 5

@@ -1,4 +1,4 @@
-import ListingsList from "@/components/listings-list"
+import ListingsList from '@/app/client-components/listings-list'
 import Link from "next/link"
 import { ShoppingBag, ArrowRight } from "lucide-react"
 

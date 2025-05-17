@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { Package, ShoppingCart, ArrowLeft, ImagePlus, X } from "lucide-react"
 import type { Listing } from "@/types/listing"
+import { use } from "react";
 import Link from "next/link"
 
-export default function EditListing({ params }: { params: { id: string } }) {
-const router = useRouter()
-const listingId = params.id
+export default function EditListing({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const router = useRouter();
+  const listingId = id;
 
 const [formData, setFormData] = useState<Omit<Listing, "created_at">>({
 id: "",
