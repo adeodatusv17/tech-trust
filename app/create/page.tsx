@@ -4,7 +4,7 @@ import React, { useState,useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { Package, ShoppingCart, ArrowLeft,ImagePlus, X } from "lucide-react"
-import styles from "./page.module.css"
+import  "./page.module.css"
 
 import type { Listing } from "@/types/listing"
 import Link from "next/link"

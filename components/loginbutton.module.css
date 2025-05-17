@@ -123,3 +123,10 @@
 		font-size: 0.9rem;
 	}
 }
+.google-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+  display: inline-block;
+}

@@ -170,7 +170,7 @@ export default function ListingDetail() {
                 </>
               )}
             </span>
-            <span className="listing-price">₹{listing.price.toFixed(2)}</span>
+            <span className="listing-price">₹{listing.type==="sell"?listing.price.toFixed(2):listing.budget.toFixed(2)}</span>
             <span className="listing-date">
               <Calendar size={16} className="mr-1" />
               {formatDate(listing.created_at)}

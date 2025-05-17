@@ -9,11 +9,7 @@ export default function Home() {
         <h1>Welcome to Tech Trust </h1>
         <p>Providing Students access to subsidised laptops </p>
         <Link href="/create">
-          <button className="button button-primary">
-            <ShoppingBag size={18} className="mr-2" />
-            Post a Listing
-            <ArrowRight size={18} className="ml-2" />
-          </button>
+         
         </Link>
       </div>
       <div className="listings-container">

@@ -184,7 +184,8 @@ export default function ListingsList() {
                     maxWidth: '40%',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
-                    textOverflow: 'ellipsis'
+                    textOverflow: 'ellipsis',
+                    color:'white'
                   }}>{listing.category}</span>
                   
                   <span className="listing-price" style={{

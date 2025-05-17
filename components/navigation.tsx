@@ -1,36 +1,16 @@
-// components/Navigation.tsx
 "use client";
-
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingBag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./authProvider";
-import LoginButton from "./LoginButton"; // your existing motion button
+import LoginButton from "./LoginButton";
+import { Suspense } from "react";
 
-export default function Navigation() {
-  const [menuOpen, setMenuOpen] = useState(false);
+// Create a client-only auth section component
+const AuthSection = () => {
   const { user } = useAuth();
-
-  const toggleMenu = () => {
-    console.log("[Navigation] toggleMenu, was:", menuOpen);
-    setMenuOpen((o) => !o);
-  };
-
-  const handleLogin = async () => {
-    console.log("[Navigation] Starting Google login...");
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      // no redirectTo override
-    });
-    console.log("[Navigation] signInWithOAuth returned data:", data);
-    if (error) {
-      console.error("[Navigation] Login error:", error);
-    } else {
-      console.log("[Navigation] Login initiated, check redirect");
-    }
-  };
-
+  
   const handleLogout = async () => {
     console.log("[Navigation] Starting logout...");
     const { error } = await supabase.auth.signOut();
@@ -40,70 +20,85 @@ export default function Navigation() {
       console.log("[Navigation] Logout successful");
     }
   };
-
-  console.log("[Navigation] Current user:", user);
-
+  
+  const handleLogin = async () => {
+    console.log("[Navigation] Starting Google login...");
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+    if (error) {
+      console.error("[Navigation] Login error:", error);
+    }
+  };
+  
   return (
-    <header className="site-header">
-      <div className="container">
-        <div className="header-content">
-          <Link href="/" className="logo">
-            <ShoppingBag size={24} />
-            Tech Trust
-          </Link>
-
+    <>
+      {user ? (
+        <div className="tt-user-section">
+          <span className="tt-welcome-text">
+            Welcome, {user.name}
+          </span>
           <button
-            className={`menu-toggle ${menuOpen ? "open" : ""}`}
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
+            onClick={handleLogout}
+            className="tt-signout-btn"
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            Sign out
           </button>
+        </div>
+      ) : (
+        <LoginButton />
 
-          <nav className={`main-nav ${menuOpen ? "open" : ""}`}>
-            <ul>
-              <li>
-                <Link href="/" onClick={() => setMenuOpen(false)}>
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/my-listings" onClick={() => setMenuOpen(false)}>
-                  My Listings
-                </Link>
-              </li>
-            </ul>
-          </nav>
+      )}
+    </>
+  );
+};
 
-          <div className="header-actions flex items-center space-x-4">
-            <Link href="/create">
-              <button className="button button-primary flex items-center">
-                <ShoppingBag size={16} className="mr-2" />
-                Post a Listing
-              </button>
+export default function Navigation() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+  
+  return (
+    <header className="tt-header">
+      <div className="tt-header-container">
+        <Link href="/" className="tt-logo">
+          <ShoppingBag size={24} />
+          <span>Tech Trust</span>
+        </Link>
+        
+        <button 
+          className={`tt-menu-toggle ${isMenuOpen ? 'open' : ''}`} 
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        
+        <div className={`tt-nav-section ${isMenuOpen ? 'open' : ''}`}>
+          <ul className="tt-nav-links">
+            <li className="tt-nav-item">
+              <Link href="/" className="tt-nav-link">Home</Link>
+            </li>
+            <li className="tt-nav-item">
+              <Link href="/my-listings" className="tt-nav-link">My Listings</Link>
+            </li>
+          </ul>
+          
+          <div className="tt-nav-actions">
+            <Link 
+              href="/create" 
+              className="tt-post-btn"
+            >
+              Post a Listing
             </Link>
             
-
-
-            {user ? (
-              <>
-                <span className="text-sm">
-                
-
-                  Welcome, {user.name || user.email.split("@")[0]}
-                </span>
-                <button
-                  className="button button-secondary text-sm"
-                  onClick={handleLogout}
-                >
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <LoginButton isCollapsed={false} variant="dark" onClick={handleLogin} />
-            )}
+            <Suspense fallback={<div className="h-10 w-36 bg-slate-800 animate-pulse rounded-md"></div>}>
+              <AuthSection />
+            </Suspense>
           </div>
         </div>
       </div>

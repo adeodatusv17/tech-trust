@@ -4,26 +4,38 @@ import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import { useUser } from "../lib/hooks/auth-helper"
 import Link from "next/link"
-import { ShoppingBag, Search, Clock, ArrowDown, ArrowUp } from "lucide-react"
+import { ShoppingBag, Search, Clock, ArrowDown, ArrowUp, Check, Filter, Trash2, ChevronRight } from "lucide-react"
 import type { Listing } from "@/types/listing"
 
 export default function UserListings() {
   const { user } = useUser()
   const [listings, setListings] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [sortOption, setSortOption] = useState("latest")
+  const [error, setError] = useState("")
   const [filterType, setFilterType] = useState("all")
+  const [sortBy, setSortBy] = useState("newest")
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false)
 
-  const handleLogin = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-  })
-  if (error) console.error("OAuth Login failed:", error.message)
+  const handleDelete = async (id: string) => {
+  const confirmDelete = confirm("Are you sure you want to delete this listing?")
+  if (!confirmDelete) return
+
+  try {
+    const { error } = await supabase
+      .from('listings')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+
+    // Remove the deleted listing from UI
+    setListings((prev) => prev.filter((listing) => listing.id !== id))
+  } catch (err: any) {
+    alert(err.message || "Failed to delete the listing.")
+  }
 }
 
   
-  // Fetch user's listings when component mounts
   useEffect(() => {
     const fetchListings = async () => {
       if (!user) {
@@ -31,183 +43,187 @@ export default function UserListings() {
         return
       }
       
-      setLoading(true)
-      setError(null)
-      
       try {
-        const { data, error } = await supabase
-          .from('listings')
-          .select('*')
-          .eq('user_id', user.id)
-          
+        setLoading(true)
+        let query = supabase.from('listings').select('*')
+        
+        if (filterType !== 'all') {
+          query = query.eq('type', filterType)
+        }
+        
+        query = query.eq('user_id', user.id)
+        
+        // Apply sorting
+        if (sortBy === 'newest') {
+          query = query.order('created_at', { ascending: false })
+        } else if (sortBy === 'oldest') {
+          query = query.order('created_at', { ascending: true })
+        } else if (sortBy === 'price') {
+          query = query.order('price', { ascending: true })
+        }
+        
+        const { data, error } = await query
+        
         if (error) throw error
         setListings(data || [])
-      } catch (error: any) {
-        console.error("Error fetching listings:", error)
-        setError(error.message || "Failed to fetch your listings")
+      } catch (err: any) {
+        setError(err.message || "Failed to load listings")
       } finally {
         setLoading(false)
       }
     }
     
     fetchListings()
-  }, [user])
+  }, [user, filterType, sortBy])
   
-  // Apply filtering based on listing type
-  const filteredListings = listings.filter(listing => {
-    if (filterType === "all") return true
-    return listing.type === filterType
-  })
+  const handleFilterChange = (type: string) => {
+    setFilterType(type)
+  }
   
-  // Apply sorting based on selected option
-  const sortedListings = [...filteredListings].sort((a, b) => {
-    switch (sortOption) {
-      case "latest":
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      case "oldest":
-        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      case "price-high":
-        return (b.type === "sell" ? b.price : b.budget) - (a.type === "sell" ? a.price : a.budget)
-      case "price-low":
-        return (a.type === "sell" ? a.price : a.budget) - (b.type === "sell" ? b.price : b.budget)
-      default:
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    }
-  })
-
-  // Format date for display
-  function formatDate(dateString: string | Date) {
-    const date = new Date(dateString);
-    const now = new Date();
-    
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    if (diffMins < 60) {
-      return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
-    } else if (diffHours < 24) {
-      return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
-    } else if (diffDays < 30) {
-      return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
+  const handleSortChange = (type: string) => {
+    setSortBy(type)
+    setSortDropdownOpen(false)
+  }
+  
+  if (!user) {
+    return (
+      <div className="container">
+        <div className="no-listings">
+          <h2>User Listings</h2>
+          <p>Please sign in to view your listings.</p>
+        </div>
+      </div>
+    )
+  }
+  
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="loading">Loading your listings...</div>
+      </div>
+    )
   }
   
   return (
     <div className="container">
-      <div className="my-listings">
-        <h1>My Listings</h1>
-        
-        {!user ? (
-          <div className="no-listings">
-            <p>Please sign in to view your listings.</p>
-            <button onClick={handleLogin} className="button button-primary">
-  Sign In with Google
-</button>
-
-          </div>
-        ) : loading ? (
-          <div className="loading">Loading your listings...</div>
-        ) : error ? (
-          <div className="no-listings">
-            <p>{error}</p>
-            <button 
-              className="button button-primary"
-              onClick={() => window.location.reload()}
-            >
-              Try Again
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="listings-controls">
-              <div className="filter-options">
-                <button
-                  className={`button ${filterType === "all" ? "button-primary" : "button-outline"}`}
-                  onClick={() => setFilterType("all")}
-                >
-                  All
-                </button>
-                <button
-                  className={`button ${filterType === "sell" ? "button-primary" : "button-outline"}`}
-                  onClick={() => setFilterType("sell")}
-                >
-                  <ShoppingBag size={16} />
-                  Selling
-                </button>
-                <button
-                  className={`button ${filterType === "buy" ? "button-primary" : "button-outline"}`}
-                  onClick={() => setFilterType("buy")}
-                >
-                  <Search size={16} />
-                  Looking For
-                </button>
-              </div>
-              
-              <div className="sort-options">
-                <label>Sort by:</label>
-                <select
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  className="sort-select"
-                >
-                  <option value="latest">Latest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="price-low">Price: Low to High</option>
-                </select>
-              </div>
+      <div className="listings-container">
+        <div className="listings-header">
+          <h2>Your Listings</h2>
+          <div className="listings-filters">
+            {/* Filter Buttons */}
+            <div className="filter-buttons">
+              <button 
+                className={`filter-button ${filterType === 'all' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('all')}
+              >
+                <Filter size={16} />
+                All
+              </button>
+              <button 
+                className={`filter-button ${filterType === 'buy' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('buy')}
+              >
+                <ShoppingBag size={16} />
+                Buying
+              </button>
+              <button 
+                className={`filter-button ${filterType === 'sell' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('sell')}
+              >
+                <ChevronRight size={16} />
+                Selling
+              </button>
             </div>
             
-            {sortedListings.length === 0 ? (
-              <div className="no-listings">
-                <p>You don't have any {filterType !== "all" ? filterType : ""} listings yet.</p>
-                <Link href="/create" className="button button-primary">
-                  Create a Listing
-                </Link>
-              </div>
-            ) : (
-              <div className="listings-list">
-                {sortedListings.map(listing => (
-                  <div key={listing.id} className="listing-card">
-                    <div className="listing-card-content">
-                      <h3>{listing.title}</h3>
-                      <p className="listing-description">
-                        {listing.description.length > 100 
-                          ? `${listing.description.slice(0, 100)}...` 
-                          : listing.description}
-                      </p>
-                      <div className="listing-meta">
-                        <span className={`listing-type ${listing.type}`}>
-                          {listing.type === "sell" ? "Selling" : "Looking For"}
-                        </span>
-                        {listing.type === "sell" ? (
-                          <span className="listing-price">${listing.price}</span>
-                        ) : (
-                          <span className="listing-price">Budget: ${listing.budget}</span>
-                        )}
-                      </div>
-                      <div className="listing-date">
-                        <Clock size={14} className="inline mr-1" />
-                        {formatDate(listing.created_at)}
-                      </div>
-                      <div className="listing-actions">
-                        <Link href={`/listings/${listing.id}`} className="button button-outline">
-                          View
-                        </Link>
-                        <Link href={`/edit/${listing.id}`} className="button button-outline">
-                          Edit
-                        </Link>
-                      </div>
-                    </div>
+            {/* Sort Dropdown */}
+            <div className="filter-dropdown">
+              <button 
+                className="dropdown-toggle" 
+                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+              >
+                Sort by: {sortBy === 'newest' ? 'Newest' : sortBy === 'oldest' ? 'Oldest' : 'Price'}
+                {sortDropdownOpen ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+              </button>
+              
+              {sortDropdownOpen && (
+                <div className="dropdown-menu show">
+                  <div 
+                    className={`dropdown-item ${sortBy === 'newest' ? 'active' : ''}`}
+                    onClick={() => handleSortChange('newest')}
+                  >
+                    Newest
+                    {sortBy === 'newest' && <Check size={16} />}
                   </div>
-                ))}
+                  <div 
+                    className={`dropdown-item ${sortBy === 'oldest' ? 'active' : ''}`}
+                    onClick={() => handleSortChange('oldest')}
+                  >
+                    Oldest
+                    {sortBy === 'oldest' && <Check size={16} />}
+                  </div>
+                  <div 
+                    className={`dropdown-item ${sortBy === 'price' ? 'active' : ''}`}
+                    onClick={() => handleSortChange('price')}
+                  >
+                    Price
+                    {sortBy === 'price' && <Check size={16} />}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        {listings.length === 0 ? (
+          <div className="no-listings">
+            <p>You don't have any {filterType !== "all" ? filterType : ""} listings yet.</p>
+            <Link href="/create-listing" className="button button-primary">
+              Create a Listing
+            </Link>
+          </div>
+        ) : (
+          <div className="listings-list">
+            {listings.map((listing) => (
+              <div key={listing.id} className="listing-card">
+                <div className="listing-card-content">
+                  <h3>{listing.title}</h3>
+                  <p className="listing-description">
+                    {listing.description.length > 100 ? `${listing.description.slice(0, 100)}...` : listing.description}
+                  </p>
+                  <div className="listing-meta">
+                    <div className={`listing-type ${listing.type}`}>
+                      {listing.type === 'buy' ? (
+                        <>
+                          <ShoppingBag size={14} />
+                          Buying
+                        </>
+                      ) : (
+                        <>
+                          <ChevronRight size={14} />
+                          Selling
+                        </>
+                      )}
+                    </div>
+                    <span className="listing-price">${listing.price}</span>
+                  </div>
+                  <div className="listing-actions">
+                    <Link href={`/listings/${listing.id}`} className="button button-outline">
+                      View Details
+                    </Link>
+                    <Link href={`/edit-listing/${listing.id}`} className="button button-primary">
+                      Edit
+                    </Link>
+                    <button className="button button-danger"
+                     onClick={() => handleDelete(listing.id)}>
+                    <Trash2 size={16}/>Delete</button>
+
+                  </div>
+                </div>
               </div>
-            )}
-          </>
+            ))}
+          </div>
         )}
       </div>
     </div>
