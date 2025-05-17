@@ -179,7 +179,7 @@ export default function UserListings() {
         {listings.length === 0 ? (
           <div className="no-listings">
             <p>You don't have any {filterType !== "all" ? filterType : ""} listings yet.</p>
-            <Link href="/create-listing" className="button button-primary">
+            <Link href="/create" className="button button-primary">
               Create a Listing
             </Link>
           </div>
